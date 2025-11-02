@@ -1,6 +1,17 @@
 # Cara Mengontrol Script dari Ponsel
 
-Panduan ini menjelaskan cara mengontrol script pengisian form otomatis dari ponsel Anda menggunakan GitHub API.
+Panduan ini menjelaskan cara mengontrol script pengisian form otomatis dari ponsel Anda menggunakan GitHub API atau antarmuka web yang sederhana.
+
+## Metode 1: Menggunakan Antarmuka Web (Disarankan)
+
+Kami telah membuat antarmuka web yang sangat sederhana untuk mengontrol script dengan tombol start dan stop:
+
+1. Buka file `mobile_controller.html` di browser ponsel Anda
+2. Masukkan:
+   - Personal Access Token GitHub Anda
+   - Username GitHub Anda (alfiierrr)
+   - Nama repository (AlfiResponden)
+3. Gunakan tombol "Mulai Script" dan "Hentikan Script"
 
 ## Prasyarat
 
