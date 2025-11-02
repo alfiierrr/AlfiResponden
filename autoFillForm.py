@@ -28,7 +28,7 @@ logging.basicConfig(
 # Ganti dengan URL Google Form Anda
 FORM_URL = os.environ.get('FORM_URL', 'https://forms.gle/wqeJBMLVcmrghjyv5')  # Ganti dengan URL Google Form Anda yang sebenarnya
 # Ganti dengan nama file CSV Anda
-CSV_FILE = 'Dampak Pamasarannnn.csv'  # Menggunakan file CSV yang sebenarnya
+CSV_FILE = 'Dampak_Pamasarannnn.csv'  # Menggunakan file CSV yang sebenarnya
 
 # Gunakan path absolut untuk file CSV untuk menghindari masalah dengan OneDrive
 CSV_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), CSV_FILE)
