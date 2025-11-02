@@ -26,7 +26,7 @@ logging.basicConfig(
 
 # --- KONFIGURASI PENTING ---
 # Ganti dengan URL Google Form Anda
-FORM_URL = os.environ.get('FORM_URL', 'https://forms.gle/wqeJBMLVcmrghjyv5')  # Ganti dengan URL Google Form Anda yang sebenarnya
+FORM_URL = os.environ.get('FORM_URL', 'https://docs.google.com/forms/d/e/1FAIpQLSeIjmjexFEjgAMZrQ9y58h_WKQSHhJ03FV7ulg521UDH__dog/viewform')  # URL Google Form Anda
 # Ganti dengan nama file CSV Anda
 CSV_FILE = 'Dampak_Pamasarannnn.csv'  # Menggunakan file CSV yang sebenarnya
 
