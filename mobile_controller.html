@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontrol Script Auto Form Filler</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .start {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .stop {
+            background-color: #f44336;
+            color: white;
+        }
+        .button:hover {
+            opacity: 0.9;
+        }
+        .button:active {
+            transform: scale(0.98);
+        }
+        .status {
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .running {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .stopped {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        .instructions {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .instructions h3 {
+            margin-top: 0;
+        }
+        .instructions ol {
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        .token-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .repo-info {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .repo-info input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Kontrol Script Auto Form Filler</h1>
+        
+        <div class="instructions">
+            <h3>📝 Instruksi Awal:</h3>
+            <ol>
+                <li>Buat Personal Access Token di GitHub dengan scope <code>repo</code></li>
+                <li>Masukkan token, username GitHub, dan nama repository di bawah</li>
+                <li>Gunakan tombol Start/Stop untuk mengontrol script</li>
+            </ol>
+        </div>
+        
+        <div>
+            <label for="token">GitHub Personal Access Token:</label>
+            <input type="password" id="token" class="token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+        </div>
+        
+        <div class="repo-info">
+            <input type="text" id="username" placeholder="Username GitHub (contoh: alfiierrr)">
+            <input type="text" id="repo" placeholder="Nama Repository (contoh: AlfiResponden)">
+        </div>
+        
+        <button class="button start" onclick="controlScript('start-script')">▶️ Mulai Script</button>
+        <button class="button stop" onclick="controlScript('stop-script')">⏹️ Hentikan Script</button>
+        
+        <div id="status" class="status" style="display: none;"></div>
+        <div id="result" style="margin-top: 20px; text-align: center;"></div>
+    </div>
+
+    <script>
+        function showStatus(message, isSuccess) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status ' + (isSuccess ? 'running' : 'stopped');
+            statusDiv.style.display = 'block';
+            
+            // Hide status after 5 seconds
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        function showResult(message, isError = false) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.style.color = isError ? '#f44336' : '#4CAF50';
+            
+            // Hide result after 5 seconds
+            setTimeout(() => {
+                resultDiv.textContent = '';
+            }, 5000);
+        }
+        
+        async function controlScript(eventType) {
+            const token = document.getElementById('token').value;
+            const username = document.getElementById('username').value;
+            const repo = document.getElementById('repo').value;
+            
+            // Validate inputs
+            if (!token || !username || !repo) {
+                showResult('⚠️ Harap isi semua field!', true);
+                return;
+            }
+            
+            const url = `https://api.github.com/repos/${username}/${repo}/dispatches`;
+            
+            const payload = {
+                event_type: eventType
+            };
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    const action = eventType === 'start-script' ? 'memulai' : 'menghentikan';
+                    showResult(`✅ Perintah untuk ${action} script telah dikirim!`);
+                    showStatus(`Script akan ${action} pada workflow berikutnya`, true);
+                } else if (response.status === 401) {
+                    showResult('❌ Token tidak valid atau tidak memiliki akses', true);
+                } else if (response.status === 404) {
+                    showResult('❌ Repository tidak ditemukan', true);
+                } else {
+                    const errorText = await response.text();
+                    showResult(`❌ Error: ${response.status} - ${errorText}`, true);
+                }
+            } catch (error) {
+                showResult(`❌ Error jaringan: ${error.message}`, true);
+            }
+        }
+        
+        // Pre-fill username and repo if available
+        window.onload = function() {
+            // You can pre-fill these values if needed
+            // document.getElementById('username').value = 'alfiierrr';
+            // document.getElementById('repo').value = 'AlfiResponden';
+        }
+    </script>
+</body>
+</html>
