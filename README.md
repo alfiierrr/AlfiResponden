@@ -51,21 +51,27 @@ Sebelum melakukan setup Git, pastikan Git sudah terinstal:
     *   Buat repository "AlfiResponden" di GitHub
     *   Jalankan `push_to_github.bat` untuk upload ke GitHub
 
-2.  Workflow akan berjalan secara otomatis setiap 15 menit
+2.  **Konfigurasi Permission GitHub Actions**:
+    *   Pergi ke Settings > Actions > General di repository Anda
+    *   Di bagian "Workflow permissions", pilih "Read and write permissions"
+    *   Centang "Allow GitHub Actions to create and approve pull requests"
+    *   Lihat file [README-GITHUB-ACTIONS.md](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/README-GITHUB-ACTIONS.md) untuk detail lebih lanjut
+
+3.  Workflow akan berjalan secara otomatis setiap 15 menit
 
 ## Penggunaan
 
 ### Untuk Penggunaan Lokal:
-1.  **Konfigurasi Skrip (`autoFillForm.py`):**
+1.  **Konfigurasi Skrip (`autoFillForm.py`)**:
     *   Buka file `autoFillForm.py`.
     *   **`FORM_URL`**: Ganti dengan URL formulir Google Anda yang sebenarnya.
     *   Catatan: Anda tidak perlu lagi mengatur `CHROME_DRIVER_PATH` karena sekarang ditangani secara otomatis.
 
-2.  **Siapkan File CSV:**
+2.  **Siapkan File CSV**:
     *   Pastikan file CSV Anda memiliki format yang sesuai dengan struktur formulir Anda.
     *   File CSV harus berada di direktori yang sama dengan `autoFillForm.py`.
 
-3.  **Jalankan Skrip:**
+3.  **Jalankan Skrip**:
     ```bash
     python autoFillForm.py
     ```
@@ -76,8 +82,20 @@ Sebelum melakukan setup Git, pastikan Git sudah terinstal:
     *   Buat repository "AlfiResponden" di GitHub
     *   Jalankan `push_to_github.bat` untuk upload ke GitHub
 
-2.  Workflow akan berjalan otomatis setiap 15 menit
-3.  Untuk menjalankan manual:
+2.  **Konfigurasi Secret FORM_URL**:
+    *   Pergi ke Settings > Secrets and variables > Actions di repository Anda
+    *   Klik "New repository secret"
+    *   Tambahkan:
+        - Name: [FORM_URL](file://c:\Users\ASUS\OneDrive\Desktop\Auto%20Responden\autoFillForm.py#L28-L28)
+        - Value: URL Google Form Anda yang sebenarnya
+
+3.  **Konfigurasi Permission GitHub Actions**:
+    *   Pergi ke Settings > Actions > General di repository Anda
+    *   Di bagian "Workflow permissions", pilih "Read and write permissions"
+    *   Centang "Allow GitHub Actions to create and approve pull requests"
+
+4.  Workflow akan berjalan otomatis setiap 15 menit
+5.  Untuk menjalankan manual:
     *   Pergi ke tab "Actions" di repository Anda
     *   Pilih workflow "Auto Form Filler"
     *   Klik "Run workflow" > "Run workflow"
@@ -162,6 +180,12 @@ Jika mengalami masalah dengan Git:
 1. Lihat file [INSTALL_GIT.md](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/INSTALL_GIT.md) untuk instruksi instalasi
 2. Pastikan Git sudah terinstal dan dapat diakses dari command line
 3. Restart terminal setelah instalasi Git
+
+### Masalah GitHub Actions
+Jika mengalami masalah dengan GitHub Actions:
+1. Lihat file [README-GITHUB-ACTIONS.md](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/README-GITHUB-ACTIONS.md) untuk troubleshooting
+2. Pastikan permission GitHub Actions sudah dikonfigurasi dengan benar
+3. Periksa apakah [FORM_URL](file://c:\Users\ASUS\OneDrive\Desktop\Auto%20Responden\autoFillForm.py#L28-L28) sudah dikonfigurasi di Secrets
 
 ## Keamanan
 
