@@ -51,13 +51,22 @@ Sebelum melakukan setup Git, pastikan Git sudah terinstal:
     *   Buat repository "AlfiResponden" di GitHub
     *   Jalankan `push_to_github.bat` untuk upload ke GitHub
 
-2.  **Konfigurasi Permission GitHub Actions**:
+2.  **Konfigurasi Secret FORM_URL**:
+    *   Pergi ke Settings > Secrets and variables > Actions di repository Anda
+    *   Klik "New repository secret"
+    *   Tambahkan:
+        - Name: [FORM_URL](file://c:\Users\ASUS\OneDrive\Desktop\Auto%20Responden\autoFillForm.py#L28-L28)
+        - Value: URL Google Form Anda yang sebenarnya
+
+3.  **Konfigurasi Permission GitHub Actions**:
     *   Pergi ke Settings > Actions > General di repository Anda
     *   Di bagian "Workflow permissions", pilih "Read and write permissions"
     *   Centang "Allow GitHub Actions to create and approve pull requests"
-    *   Lihat file [README-GITHUB-ACTIONS.md](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/README-GITHUB-ACTIONS.md) untuk detail lebih lanjut
 
-3.  Workflow akan berjalan secara otomatis setiap 15 menit
+4.  **Aktifkan GitHub Actions Workflow**:
+    *   Pergi ke tab "Actions" di repository Anda
+    *   Klik tombol untuk mengaktifkan workflow jika diminta
+    *   Workflow akan berjalan secara otomatis setiap 15 menit
 
 ## Penggunaan
 
@@ -94,11 +103,11 @@ Sebelum melakukan setup Git, pastikan Git sudah terinstal:
     *   Di bagian "Workflow permissions", pilih "Read and write permissions"
     *   Centang "Allow GitHub Actions to create and approve pull requests"
 
-4.  Workflow akan berjalan otomatis setiap 15 menit
-5.  Untuk menjalankan manual:
+4.  **Aktifkan Workflow**:
     *   Pergi ke tab "Actions" di repository Anda
     *   Pilih workflow "Auto Form Filler"
-    *   Klik "Run workflow" > "Run workflow"
+    *   Klik "Run workflow" untuk menjalankan secara manual
+    *   Workflow akan berjalan otomatis setiap 15 menit
 
 ## Kontrol dari Ponsel
 
@@ -186,6 +195,12 @@ Jika mengalami masalah dengan GitHub Actions:
 1. Lihat file [README-GITHUB-ACTIONS.md](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/README-GITHUB-ACTIONS.md) untuk troubleshooting
 2. Pastikan permission GitHub Actions sudah dikonfigurasi dengan benar
 3. Periksa apakah [FORM_URL](file://c:\Users\ASUS\OneDrive\Desktop\Auto%20Responden\autoFillForm.py#L28-L28) sudah dikonfigurasi di Secrets
+
+### Masalah File CSV
+Jika file CSV tidak ditemukan:
+1. Pastikan nama file CSV sesuai dengan yang dikonfigurasi di `autoFillForm.py`
+2. Pastikan file CSV berada di direktori yang sama dengan script
+3. Periksa apakah ada karakter khusus dalam nama file yang menyebabkan masalah
 
 ## Keamanan
 
