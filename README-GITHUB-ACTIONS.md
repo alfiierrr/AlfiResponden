@@ -1,188 +1,90 @@
-# Setup Script dengan GitHub Actions
+# Deploy ke GitHub Actions
 
-Panduan ini akan membantu Anda mengatur script pengisian form otomatis menggunakan GitHub Actions dengan kemampuan kontrol dari ponsel.
+Panduan ini menjelaskan cara mendeploy dan menjalankan script autoFillForm.py menggunakan GitHub Actions.
 
-## Persyaratan
+## Prasyarat
 
 1. Akun GitHub (gratis)
-2. Repository GitHub untuk script Anda
-3. File CSV dengan data yang akan diisi ke form
+2. Repository GitHub untuk script
+3. Git terinstal di komputer lokal
+4. File CSV dengan data yang akan diisi ke Google Form
 
-## Langkah-langkah Setup
+## Setup Awal
 
-### 1. Membuat Repository di GitHub
-1. Login ke akun GitHub Anda
-2. Klik "New repository"
-3. Beri nama repository (misalnya: auto-form-filler)
-4. Pilih "Public" atau "Private" (bebas)
-5. Jangan inisialisasi dengan README
-6. Klik "Create repository"
+### 1. Setup Git Repository
+Jika Anda belum memiliki repository Git:
+1. Jalankan `setup_git.bat` untuk inisialisasi repository lokal
+2. Buat repository baru di GitHub dengan nama `AlfiResponden`
+3. Jalankan `push_to_github.bat` untuk upload ke GitHub
 
-### 2. Upload File ke Repository
-Upload file-file berikut ke repository Anda:
-- [autoFillForm.py](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/autoFillForm.py)
-- [Dampak Pamasarannnn.csv](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/Dampak%20Pamasarannnn.csv)
-- [.github/workflows/auto-form-filler.yml](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/.github/workflows/auto-form-filler.yml) (sudah dibuat otomatis)
-- [control.json](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/control.json)
-- [web_controller.py](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/web_controller.py)
+### 2. Konfigurasi Secret FORM_URL
+1. Buka repository Anda di GitHub
+2. Pergi ke Settings > Secrets and variables > Actions
+3. Klik "New repository secret"
+4. Tambahkan:
+   - Name: [FORM_URL](file://c:\Users\ASUS\OneDrive\Desktop\Auto%20Responden\autoFillForm.py#L28-L28)
+   - Value: URL Google Form Anda yang sebenarnya
 
-### 3. Konfigurasi GitHub Actions
-File workflow sudah dibuat di `.github/workflows/auto-form-filler.yml` dengan konfigurasi berikut:
+### 3. Aktifkan GitHub Actions
+1. Pergi ke tab "Actions" di repository Anda
+2. Klik tombol untuk mengaktifkan workflow jika diminta
+3. Workflow akan berjalan secara otomatis setiap 15 menit
 
-```yaml
-name: Auto Form Filler
+## Konfigurasi Permission untuk GitHub Actions
 
-on:
-  schedule:
-    # Menjalankan setiap 15 menit untuk simulasi "terus-menerus"
-    - cron: '*/15 * * * *'
-  workflow_dispatch:  # Memungkinkan menjalankan secara manual dari GitHub UI
-  repository_dispatch:
-    types: [start-script, stop-script]
+Untuk memastikan GitHub Actions dapat berjalan dengan benar, pastikan repository memiliki permission yang tepat:
 
-jobs:
-  fill-form:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+1. Repository settings > Actions > General
+2. Di bagian "Workflow permissions", pilih:
+   - "Read and write permissions"
+   - Centang "Allow GitHub Actions to create and approve pull requests"
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.8'
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pandas selenium webdriver-manager
-
-    - name: Install Chrome
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y wget gnupg
-        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-        echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google.list
-        sudo apt-get update
-        sudo apt-get install -y google-chrome-stable
-
-    - name: Check control file
-      id: control
-      run: |
-        if [ -f "control.json" ]; then
-          STATUS=$(jq -r '.status' control.json)
-          echo "status=$STATUS" >> $GITHUB_OUTPUT
-        else
-          echo "status=running" >> $GITHUB_OUTPUT
-        fi
-
-    - name: Run autoFillForm script
-      if: steps.control.outputs.status != 'stopped'
-      env:
-        FORM_URL: ${{ secrets.FORM_URL }}
-      run: |
-        # Jika FORM_URL tidak diset di secrets, gunakan URL default
-        if [ -z "$FORM_URL" ]; then
-          echo "FORM_URL not set in secrets, using default URL"
-        fi
-        python autoFillForm.py
-
-    - name: Commit and push progress
-      run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git add progress.json control.json
-        git commit -m "Update progress.json and control.json" || echo "No changes to commit"
-        git push
-```
-
-### 4. Konfigurasi URL Form (Opsional)
-Jika Anda ingin menggunakan URL form yang berbeda dari yang sudah dikodekan:
-
-1. Di repository GitHub Anda, pergi ke Settings > Secrets and variables > Actions
-2. Klik "New repository secret"
-3. Buat secret dengan nama `FORM_URL` dan nilai URL form Google Anda
-
-### 5. Menjalankan Workflow
-Ada beberapa cara untuk menjalankan workflow:
-
-1. **Otomatis**: Workflow akan berjalan setiap 15 menit sesuai jadwal
-2. **Manual**: 
-   - Pergi ke tab "Actions" di repository Anda
-   - Pilih workflow "Auto Form Filler"
-   - Klik "Run workflow" > "Run workflow"
-
-## Kontrol dari Ponsel
-
-Script dapat dikontrol dari ponsel menggunakan GitHub API. Lihat file [README-CONTROL.md](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/README-CONTROL.md) untuk instruksi lengkap.
-
-### Fitur Kontrol:
-1. **Mulai Script**: Mengirim perintah untuk memulai eksekusi
-2. **Hentikan Script**: Mengirim perintah untuk menghentikan eksekusi
-3. **Cek Status**: Melihat status saat ini (berjalan/berhenti)
-4. **Lanjutkan dari Tempat Terakhir**: Script akan melanjutkan dari baris terakhir yang diproses
+Ini diperlukan agar GitHub Actions bot dapat melakukan commit dan push perubahan ke repository, seperti update file [progress.json](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/progress.json) dan [control.json](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/control.json).
 
 ## Cara Kerja
 
-1. GitHub Actions akan menjalankan script setiap 15 menit
-2. Script membaca data dari [Dampak Pamasarannnn.csv](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/Dampak%20Pamasarannnn.csv)
-3. Script menggunakan file [progress.json](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/progress.json) untuk melacak jawaban yang sudah dikirim
-4. File kontrol [control.json](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/control.json) digunakan untuk mengontrol status script
-5. Setiap jawaban yang berhasil dikirim akan disimpan progressnya
-6. File [progress.json](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/progress.json) dan [control.json](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/control.json) akan di-commit kembali ke repository
+Script akan berjalan secara terjadwal setiap 15 menit menggunakan cron job. Anda juga dapat menjalankan secara manual:
+
+1. Pergi ke tab "Actions" di repository Anda
+2. Pilih workflow "Auto Form Filler"
+3. Klik "Run workflow" > "Run workflow"
 
 ## Monitoring
 
-### Melihat Log
+### Melihat Status Eksekusi
 1. Pergi ke tab "Actions" di repository Anda
-2. Klik pada workflow run yang ingin dilihat
-3. Lihat log di setiap langkah
+2. Lihat workflow "Auto Form Filler"
+3. Klik pada eksekusi terbaru untuk melihat detail log
 
-### Melihat File Log
-File `form_filler.log` akan berisi log aktivitas script. Untuk melihatnya:
-1. Clone repository ke komputer lokal
-2. Buka file `form_filler.log`
+### Melihat Progress
+1. Buka file [progress.json](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/progress.json) di repository
+2. Lihat nilai `last_index` untuk mengetahui baris data terakhir yang diproses
 
-## Batasan GitHub Actions
-
-1. **Waktu Eksekusi**: Maksimal 6 jam per job
-2. **Kuota**: 2000 menit/build per bulan untuk akun gratis
-3. **Runtime**: Tidak bisa berjalan 24/7 terus menerus (tetapi dijadwalkan setiap 15 menit)
-4. **Jaringan**: Mungkin ada batasan akses jaringan
-
-## Tips
-
-1. **Optimalkan Data CSV**: Pastikan file CSV tidak terlalu besar karena ada batasan waktu eksekusi
-2. **Jadwal**: Sesuaikan jadwal cron sesuai kebutuhan Anda
-3. **Monitoring**: Periksa log secara berkala untuk memastikan script berjalan dengan baik
-4. **Backup**: Simpan salinan file CSV dan progress.json di tempat lain
+### Melihat Status Kontrol
+1. Buka file [control.json](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/control.json) di repository
+2. Lihat nilai `status`:
+   - `"running"`: Script akan berjalan
+   - `"stopped"`: Script akan berhenti
 
 ## Troubleshooting
 
-### Error: "Form not found" atau "Element not found"
-- Pastikan XPath di script sesuai dengan form Anda
-- Periksa apakah form masih tersedia dan tidak berubah strukturnya
+### Error: Permission denied to github-actions[bot]
+Jika Anda melihat error ini:
+```
+remote: Permission to alfiierrr/AlfiResponden.git denied to github-actions[bot].
+fatal: unable to access 'https://github.com/alfiierrr/AlfiResponden/': The requested URL returned error: 403
+```
 
-### Error: "CSV file not found"
-- Pastikan nama file CSV adalah `Dampak Pamasarannnn.csv` (dengan double 'n')
-- Pastikan file CSV diupload ke repository
+Solusi:
+1. Pergi ke Settings > Actions > General di repository Anda
+2. Di bagian "Workflow permissions", pilih "Read and write permissions"
+3. Centang "Allow GitHub Actions to create and approve pull requests"
 
-### Error: "ChromeDriver not found"
-- Biasanya ini ditangani oleh webdriver-manager
-- Jika terjadi error, coba restart workflow
+### Error: Process completed with exit code 128
+Ini biasanya terkait dengan masalah permission atau autentikasi. Ikuti langkah di atas untuk mengatasi masalah permission.
 
-## Keamanan
-
-1. **Private Repository**: Gunakan repository private jika data sensitif
-2. **Secrets**: Gunakan GitHub Secrets untuk menyimpan informasi sensitif
-3. **Permissions**: Batasi akses ke repository hanya untuk pengguna yang diperlukan
-4. **Token Management**: Jaga kerahasiaan Personal Access Token dan jangan bagikan
-
-## Bantuan Tambahan
-
-Jika mengalami masalah:
-1. Periksa log di tab Actions
-2. Pastikan semua dependensi terinstal dengan benar
-3. Verifikasi file CSV ada dan dapat diakses
-4. Pastikan URL form valid dan dapat diakses
-5. Periksa file `control.json` untuk status kontrol
+### Script Tidak Berjalan
+1. Pastikan workflow sudah diaktifkan
+2. Periksa apakah ada error di tab "Actions"
+3. Pastikan [FORM_URL](file://c:\Users\ASUS\OneDrive\Desktop\Auto%20Responden\autoFillForm.py#L28-L28) sudah dikonfigurasi di Secrets
+4. Periksa file [control.json](file:///C:/Users/ASUS/OneDrive/Desktop/Auto%20Responden/control.json) untuk memastikan statusnya "running"
