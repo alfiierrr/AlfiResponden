@@ -9,7 +9,7 @@ Skrip ini memungkinkan Anda untuk mengisi formulir Google secara otomatis menggu
 - **Pengisian Otomatis**: Mengisi formulir berdasarkan data dari file CSV.
 - **Mencegah Duplikasi**: Menggunakan file progress.json untuk melacak jawaban yang sudah dikirim.
 - **Kompatibel GitHub Actions**: Dapat dijalankan secara terjadwal menggunakan GitHub Actions.
-- **Kontrol dari Ponsel**: Dapat dikontrol (mulai/berhenti) dari ponsel melalui GitHub API.
+- **Kontrol dari Ponsel**: Dapat dikontrol (mulai/berhenti) dari ponsel melalui GitHub API atau antarmuka web sederhana.
 - **Lanjutkan dari Tempat Terakhir**: Script akan melanjutkan dari baris terakhir yang diproses setelah dihentikan.
 
 ## Persyaratan
@@ -84,8 +84,17 @@ Sebelum melakukan setup Git, pastikan Git sudah terinstal:
 
 ## Kontrol dari Ponsel
 
-Script dapat dikontrol dari ponsel menggunakan GitHub API:
+Script dapat dikontrol dari ponsel menggunakan dua metode:
 
+### Metode 1: Antarmuka Web (Disarankan)
+1. Buka file `mobile_controller.html` di browser ponsel Anda
+2. Masukkan:
+   - Personal Access Token GitHub Anda
+   - Username GitHub Anda (alfiierrr)
+   - Nama repository (AlfiResponden)
+3. Gunakan tombol "Mulai Script" dan "Hentikan Script"
+
+### Metode 2: GitHub API
 1.  **Mulai Script**: Kirim perintah untuk memulai eksekusi
 2.  **Hentikan Script**: Kirim perintah untuk menghentikan eksekusi
 3.  **Lanjutkan dari Tempat Terakhir**: Script akan melanjutkan dari baris terakhir yang diproses
